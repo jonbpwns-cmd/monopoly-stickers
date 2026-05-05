@@ -49,45 +49,59 @@ export default function Trade({ user }) {
   const loadMatches = async () => {
     setLoading(true)
 
-    const { data: myData } = await supabase
-      .from('sticker_counts')
-      .select('*')
-      .eq('user_id', user.id)
-
+    // Get all users except me
     const { data: allUsers } = await supabase
       .from('users')
       .select('*')
       .neq('id', user.id)
 
-    if (!myData || !allUsers || allUsers.length === 0) {
+    if (!allUsers || allUsers.length === 0) {
       setMatches([])
       setLoading(false)
       return
     }
 
-    const mySpares = myData.filter(s => s.count > 1)
+    // Get my spares (count > 1)
+    const { data: myData } = await supabase
+      .from('sticker_counts')
+      .select('*')
+      .eq('user_id', user.id)
+      .gt('count', 1)
 
+    if (!myData || myData.length === 0) {
+      setMatches([])
+      setLoading(false)
+      return
+    }
+
+    // Get all other users' sticker counts
     const { data: othersData } = await supabase
       .from('sticker_counts')
       .select('*')
       .in('user_id', allUsers.map(u => u.id))
-      .eq('count', 0)
 
     const results = []
 
-    for (const spare of mySpares) {
-      const needs = othersData?.filter(
-        o => o.pack_index === spare.pack_index && o.sticker_index === spare.sticker_index
-      ) || []
+    for (const spare of myData) {
+      for (const otherUser of allUsers) {
+        // Find if other user has this sticker
+        const otherRecord = othersData?.find(
+          o => o.user_id === otherUser.id &&
+               o.pack_index === spare.pack_index &&
+               o.sticker_index === spare.sticker_index
+        )
 
-      for (const need of needs) {
-        const otherUser = allUsers.find(u => u.id === need.user_id)
-        results.push({
-          packName: packs[spare.pack_index],
-          stickerName: stickers[spare.pack_index][spare.sticker_index],
-          needsUser: otherUser?.username,
-          myCount: spare.count,
-        })
+        // They need it if they have no record OR count is 0
+        const theyNeedIt = !otherRecord || otherRecord.count === 0
+
+        if (theyNeedIt) {
+          results.push({
+            packName: packs[spare.pack_index],
+            stickerName: stickers[spare.pack_index][spare.sticker_index],
+            needsUser: otherUser.username,
+            myCount: spare.count,
+          })
+        }
       }
     }
 
@@ -103,7 +117,7 @@ export default function Trade({ user }) {
       {loading && <p className="tradeLoading">Loading...</p>}
 
       {!loading && matches.length === 0 && (
-        <p className="tradeEmpty">No matches found yet. Make sure other users have logged their collections!</p>
+        <p className="tradeEmpty">No matches yet — make sure you have spares (count above 1) and others have logged their collections!</p>
       )}
 
       {!loading && matches.length > 0 && (
