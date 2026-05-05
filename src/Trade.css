@@ -1,0 +1,68 @@
+.tradePage {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+  
+  .tradeTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+  
+  .tradeSub {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 32px;
+  }
+  
+  .tradeLoading, .tradeEmpty {
+    color: #888;
+    font-size: 15px;
+  }
+  
+  .tradeList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .tradeRow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #fff;
+  }
+  
+  .tradePack {
+    font-size: 13px;
+    color: #888;
+    min-width: 160px;
+  }
+  
+  .tradeSticker {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a2e;
+    flex: 1;
+  }
+  
+  .tradeInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    font-size: 13px;
+  }
+  
+  .tradeCount {
+    color: #888;
+  }
+  
+  .tradeNeeds {
+    color: #1a1a2e;
+  }
