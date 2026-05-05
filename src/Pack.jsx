@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
-import Sticker from './Sticker'
+import Sticker from './sticker'
 import './Pack.css'
 
 const packs = [
