@@ -46,54 +46,118 @@ export default function Trade({ user }) {
     loadMatches()
   }, [])
 
-  const loadMatches = async () => {
-    setLoading(true)
+//   const loadMatches = async () => {
+//     setLoading(true)
 
-    // Get all users except me
+//     // Get all users except me
+//     const { data: allUsers } = await supabase
+//       .from('users')
+//       .select('*')
+//       .neq('id', user.id)
+
+//     if (!allUsers || allUsers.length === 0) {
+//       setMatches([])
+//       setLoading(false)
+//       return
+//     }
+
+//     // Get my spares (count > 1)
+//     const { data: myData } = await supabase
+//       .from('sticker_counts')
+//       .select('*')
+//       .eq('user_id', user.id)
+//       .gt('count', 1)
+
+//     if (!myData || myData.length === 0) {
+//       setMatches([])
+//       setLoading(false)
+//       return
+//     }
+
+//     // Get all other users' sticker counts
+//     const { data: othersData } = await supabase
+//       .from('sticker_counts')
+//       .select('*')
+//       .in('user_id', allUsers.map(u => u.id))
+
+//     const results = []
+
+//     for (const spare of myData) {
+//       for (const otherUser of allUsers) {
+//         // Find if other user has this sticker
+//         const otherRecord = othersData?.find(
+//           o => o.user_id === otherUser.id &&
+//                o.pack_index === spare.pack_index &&
+//                o.sticker_index === spare.sticker_index
+//         )
+
+//         // They need it if they have no record OR count is 0
+//         const theyNeedIt = !otherRecord || otherRecord.count === 0
+
+//         if (theyNeedIt) {
+//           results.push({
+//             packName: packs[spare.pack_index],
+//             stickerName: stickers[spare.pack_index][spare.sticker_index],
+//             needsUser: otherUser.username,
+//             myCount: spare.count,
+//           })
+//         }
+//       }
+//     }
+
+//     setMatches(results)
+//     setLoading(false)
+//   }
+
+const loadMatches = async () => {
+    setLoading(true)
+  
     const { data: allUsers } = await supabase
       .from('users')
       .select('*')
       .neq('id', user.id)
-
+  
+    
+  
     if (!allUsers || allUsers.length === 0) {
       setMatches([])
       setLoading(false)
       return
     }
-
-    // Get my spares (count > 1)
+  
     const { data: myData } = await supabase
       .from('sticker_counts')
       .select('*')
       .eq('user_id', user.id)
       .gt('count', 1)
-
+  
+    
+  
     if (!myData || myData.length === 0) {
       setMatches([])
       setLoading(false)
       return
     }
-
-    // Get all other users' sticker counts
+  
     const { data: othersData } = await supabase
       .from('sticker_counts')
       .select('*')
       .in('user_id', allUsers.map(u => u.id))
-
+  
+    
+  
     const results = []
-
+  
     for (const spare of myData) {
       for (const otherUser of allUsers) {
-        // Find if other user has this sticker
         const otherRecord = othersData?.find(
           o => o.user_id === otherUser.id &&
                o.pack_index === spare.pack_index &&
                o.sticker_index === spare.sticker_index
         )
-
-        // They need it if they have no record OR count is 0
         const theyNeedIt = !otherRecord || otherRecord.count === 0
-
+        
+  
         if (theyNeedIt) {
           results.push({
             packName: packs[spare.pack_index],
@@ -104,7 +168,8 @@ export default function Trade({ user }) {
         }
       }
     }
-
+  
+    
     setMatches(results)
     setLoading(false)
   }
